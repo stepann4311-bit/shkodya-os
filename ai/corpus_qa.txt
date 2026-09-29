@@ -1,0 +1,104 @@
+C language basics	Use int main(void) as the entry point. Every statement ends with a semicolon and every block is wrapped in braces.
+What is a pointer	A pointer stores the address of another object. int *p holds the address of an int, and *p reads or writes that int.
+Pointer dereference	The unary * operator reads the value at an address. Writing *p = 5 stores 5 into the object p points at.
+Address of operator	The unary & operator yields the address of an object, so p = &x makes p point at x.
+Null pointer	A null pointer is the value 0 cast to a pointer type. Dereferencing it is undefined behaviour, so always check for NULL.
+Difference between array and pointer	An array name decays to a pointer to its first element, but it is not a pointer: sizeof(arr) is the whole array and &arr has array type.
+Why sizeof array differs	The compiler knows the declared array size, so sizeof gives bytes times elements. In a function parameter the size is lost and sizeof gives a pointer size.
+String in c	A C string is a char array terminated by a zero byte. strlen scans until that zero, so the terminator is not counted.
+strcpy and strcat	strcpy copies a source string into a destination buffer including the terminator. strcat appends to the existing string. Both trust the destination size.
+Safe string copy	Use a bounded copy like snprintf or your own loop that stops at capacity minus one and always writes the terminator.
+String comparison	The == operator compares addresses, not contents. Use strcmp, which returns zero when the two strings are equal.
+Integer types on 64 bit	On modern 64 bit targets int is 32 bits, long is 64, and pointers are 64. Use uintptr_t when you need an integer that holds a pointer.
+Signed versus unsigned	A signed value keeps one bit for the sign, an unsigned value uses all bits for magnitude. Mixing them in one expression silently converts to unsigned.
+Integer overflow	Signed overflow is undefined behaviour, unsigned overflow wraps modulo two to the power of the width. Both surprise people in loops and hash functions.
+Bitwise operators	The operators & | ^ ~ work bit by bit. They are not the logical operators, and & has lower precedence than == which causes classic bugs.
+Shift operator	Left shift by n multiplies by two to the power of n. Shifting by the width of the type or more is undefined, so guard the count.
+Ternary operator	The expression cond ? a : b evaluates cond first and yields a or b. Both branches must have compatible types.
+switch statement	A switch compares an integer against constant cases and jumps to the match. Without break, control falls through into the next case.
+Struct in c	A struct groups named fields into one object. The size includes padding, so the total can be larger than the sum of the fields.
+Struct padding	The compiler aligns each field to its natural boundary, so a char followed by an int leaves three bytes of padding. Reorder fields to shrink the struct.
+Union in c	A union overlays all members on the same storage, so its size is the largest member. Writing one member and reading another is type punning.
+typedef	A typedef introduces a new name for an existing type. It does not create a distinct type and performs no runtime work.
+const qualifier	const promises that the object will not be modified through that name. It is a compile time contract and costs nothing at runtime.
+static keyword	At file scope static gives internal linkage, so the symbol is invisible outside the translation unit. Inside a function it makes the variable live for the whole program.
+volatile keyword	volatile tells the compiler the value can change outside the program's control. Use it for memory mapped registers and for variables shared with an interrupt handler.
+Function pointer	A function pointer stores the address of a function, for example int (*f)(int). Call it as f(3) or (*f)(3).
+Callback pattern	Store a function pointer plus a context void pointer in a struct. The caller invokes it later, which decouples the producer of events from the consumer.
+Preprocessor define	The #define directive performs textual substitution before compilation. Wrap arguments in parentheses to avoid precedence surprises.
+Include guards	Surround a header body with #ifndef NAME_H and #define NAME_H plus #endif so a double include is harmless.
+Header versus source	Declarations live in headers, definitions live in one source file. Inline functions in a header must be marked static or inline to avoid duplicate symbols.
+Compile and link	The compiler turns each source file into an object file, the linker merges them and resolves symbols. An unresolved external means the definition is missing.
+Undefined reference	The linker could not find a symbol you used. Check that the definition exists, is spelled identically, and is included in the link command.
+Segmentation fault	The process touched memory it does not own. Common causes are a null dereference, an expired pointer, or an array index past the end.
+Debug a crash	Rebuild with symbols, run under a debugger, and inspect the faulting instruction and register dump. Print the address and compare it with your map file.
+
+Memory and allocation	malloc returns a block from the heap, free returns it. Every successful malloc must be matched by exactly one free.
+Why malloc fails	malloc returns NULL when the heap cannot grow, the request is absurdly large, or the heap metadata is corrupted by an earlier overflow.
+Heap versus stack	The stack is automatic and LIFO with a small fixed size, the heap is manual and grows on demand. Deep recursion exhausts the stack.
+Stack overflow	Unbounded recursion or a huge local array exceeds the stack. A large local buffer is a common cause in embedded and kernel code.
+Use after free	Reading a block after free is undefined. The allocator may have reused the memory, so the value is arbitrary.
+Double free	Calling free twice on the same pointer corrupts the free list. Set the pointer to NULL after freeing to make the mistake obvious.
+Memory leak	A block that is never freed stays reserved until the process exits. Track ownership and free on every path, including error paths.
+Buffer overflow	Writing past the end of a buffer overwrites neighbouring data. Always bound the index by the capacity you actually allocated.
+Alignment	Most CPUs require an int to sit on a four byte boundary and a pointer on eight. A misaligned access is slow or faults outright.
+Cache locality	Sequential access beats random access because the CPU prefetches full cache lines. Structure of arrays can help when you walk one field only.
+memcpy and memmove	memcpy copies between buffers that do not overlap. Use memmove when source and destination may overlap, because it copies via a temporary order.
+memset	memset writes a single byte value to a range. It cannot set an array of ints to one, since each byte becomes one.
+
+Data structures and algorithms	Pick the structure from the access pattern: arrays for indexing, lists for splicing, hash tables for lookup, trees for ordered traversal.
+Linked list	A linked list stores a next pointer in each node. Insertion is constant time once you hold the predecessor, but lookup is linear.
+Doubly linked list	Each node keeps both next and prev pointers, so removal is constant time given only the node itself.
+Stack data structure	A stack is last in first out with push and pop at one end. It backs recursion, undo, and expression parsing.
+Queue data structure	A queue is first in first out with enqueue at the tail and dequeue at the head. A ring buffer implements it without moving elements.
+Ring buffer	Keep head, tail, and capacity as indices modulo capacity. Full and empty are distinguished by wasting one slot or by a separate count.
+Binary search	Binary search halves a sorted range each step for logarithmic lookup. Compute the midpoint as low plus high minus low over two to avoid overflow.
+Bubble sort	Bubble sort swaps adjacent out of order pairs until a pass makes no swap. It is easy to write and quadratic, so use it only on tiny inputs.
+Quick sort	Quick sort partitions around a pivot and recurses on both sides. Average time is n log n and the worst case is quadratic on already sorted input.
+Merge sort	Merge sort splits the range, sorts each half, and merges them. It is stable and always n log n but needs extra storage.
+Hash table	A hash table maps a key to a bucket with a hash function and resolves collisions by chaining or probing. Load factor drives the cost.
+Hash function	A good hash spreads keys uniformly and is cheap. FNV-1a is a common choice: multiply by a prime and xor each byte.
+Binary tree	A tree node holds a value and up to two children. A binary search tree keeps smaller values left and larger right for ordered search.
+Tree traversal	Preorder visits the node then the children, inorder visits left node right and yields sorted order, postorder visits the children first.
+Breadth first search	BFS explores a graph level by level with a queue. On an unweighted graph it finds the shortest path in edges.
+Depth first search	DFS follows one branch as far as possible using a stack or recursion. It is the basis for topological sort and cycle detection.
+Big O notation	Big O describes how the cost grows with input size and ignores constants. It is the language for comparing algorithms, not a benchmark.
+
+Operating systems	An operating system multiplexes the CPU, memory, and devices, and gives programs a stable interface to them.
+Boot sequence	The firmware loads a bootloader, the bootloader loads the kernel and hands it control, the kernel sets up memory and interrupts, then starts user code.
+What is a kernel	The kernel is the privileged core that owns the hardware. It runs in ring zero and mediates every access to memory and devices.
+Protected mode	Protected mode gives segmentation, a flat 32 bit address space, and privilege levels. It replaced the 16 bit real mode of early x86.
+Long mode	Long mode is the 64 bit mode of x86-64. It needs PAE and paging enabled, and a GDT entry with the long bit set before the far jump.
+Entering long mode	Build a PML4, a PDPT, and page directories, set CR4.PAE, load CR3, set EFER.LME, set CR0.PG, then far jump to a 64 bit code segment.
+Page table levels	x86-64 uses four levels: PML4, PDPT, PD, and PT. Each entry points to the next table, and each level covers nine bits of the address.
+Huge page	A two megabyte huge page is set by the page size bit in a page directory entry. One entry then maps two megabytes instead of four kilobytes.
+Identity mapping	Identity mapping makes virtual and physical addresses equal, which is what a kernel needs before it can relocate itself.
+Paging	Paging translates virtual addresses to physical ones through page tables. It gives isolation, demand allocation, and a uniform address space.
+Virtual memory	Virtual memory lets each process see its own address space backed by physical frames and swap. The page fault handler fills in what is missing.
+Page fault	A page fault fires when a virtual address is not mapped or is not accessible. The handler either fixes the mapping or kills the offending process.
+Interrupt descriptor table	The IDT holds one gate per interrupt vector with the handler address, selector, and attributes. Load it with the lidt instruction.
+Interrupt versus exception	An interrupt is asynchronous and comes from a device. An exception is synchronous and comes from the instruction the CPU just executed.
+Interrupt handler	Save the register state, acknowledge the controller, do the work, then restore and return with iret. Keep interrupt context short and never block in it.
+Programmable interrupt controller	The 8259 PIC delivers device interrupts on IRQ lines. You remap it away from the exception vectors and mask lines you do not handle.
+End of interrupt	After handling a device interrupt you must send an end of interrupt byte to the PIC, or no further interrupts arrive on that line.
+Interrupts and cli	cli clears the interrupt flag so the CPU ignores maskable interrupts until sti. Protect short critical sections and keep them short.
+IDT gate types	An interrupt gate clears the interrupt flag on entry, a trap gate leaves it as it was. Exceptions use trap gates, hardware interrupts usually use interrupt gates.
+Context switch	Save the current register state, switch the stack pointer to the next task, restore its registers, and return. The timer drives the switch.
+Scheduler	A scheduler picks which runnable task gets the CPU. Round robin is simplest: keep a queue and move the running task to the back.
+Preemption	Preemption means the kernel can be interrupted by a higher priority task. It needs careful locking, because a task can be suspended mid update.
+Syscall	A syscall is a controlled transition from user mode into the kernel. The kernel validates every argument before trusting it.
+Ring levels	Ring zero is kernel mode with full privileges, ring three is user mode. Moving between them happens only through gates the kernel set up.
+Multiboot	A Multiboot header sits in the first eight kilobytes of the image with a magic value, flags, and a checksum that must sum to zero.
+GRUB handoff	GRUB loads the image, fills the Multiboot info structure, and jumps to your entry point with the magic in eax and the info pointer in ebx.
+Memory mapped io	Device registers appear as memory addresses. Mark those pointers volatile so the compiler does not cache or reorder the accesses.
+Port io	The in and out instructions move bytes between a register and an io port. Drivers for the PIC, PIT, and PS2 controller use them.
+Programmable interval timer	The PIT generates periodic interrupts on IRQ zero. Program its divisor to pick the tick rate your scheduler uses.
+PS2 keyboard	A PS2 keyboard sends scan codes on IRQ one. Read the data port, translate the scan code, and handle the release bit.
+Framebuffer	A linear framebuffer is a block of memory the display scans out. Write a pixel by indexing at row times pitch plus column times bytes per pixel.
+Double buffering	Draw into an offscreen buffer and copy it to the framebuffer once per frame. That removes tearing and flicker from partial updates.
+Floating point in a kernel	The kernel usually avoids floating point because saving FPU state on every interrupt is expensive and the build may disable SSE entirely.
+Freestanding build	A freestanding kernel is compiled with -ffreestanding and -nostdlib and provides its own memcpy, memset, and string routines.
+No stdlib in kernel	There is no libc in a kernel, so write your own strlen, strcpy, and memcpy. They must not assume an aligned or overlapping buffer.
+Global descriptor table	The GDT defines the code and data segments with base, limit, and access bits. Load it with lgdt, then reload every segment register.
+Stack alignment	The System V ABI expects the stack pointer to be sixteen byte aligned at the call instruction. An odd number of pushes before a call breaks it.
+MMIO and volatile	Without volatile the compiler may keep a device register in a register or delete a read entirely. Device access must always be volatile.
