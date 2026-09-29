@@ -1,55 +1,35 @@
-# Prerequisites
-*.d
+# NOTE: Git only treats '#' as a comment at the START of a line. A trailing
+# comment would become part of the pattern, so every note here sits on its own
+# line above the rule it explains.
 
-# Object files
+# --- build artefacts ---
+# myos64.bin, wallpaper.bin, ai/ai_model.bin and the disk images all live here.
 *.o
-*.ko
 *.obj
 *.elf
+*.flat
+*.bin
+*.iso
+*.img
 
-# Linker output
-*.ilk
-*.map
-*.exp
+# --- staging trees ---
+build/
+build64/
+isodir/
 
-# Precompiled Headers
-*.gch
-*.pch
+# --- generated sources ---
+# Produced by gen_wallpaper.py and tools/train_ai.py on every build.
+wallpaper.bin
+ai/ai_model.bin
+ai/stopwords.inc
 
-# Libraries
-*.lib
-*.a
-*.la
-*.lo
+# --- test output ---
+screenshots/
+*.ppm
 
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
-
-# Executables
-*.exe
-*.out
-*.app
-*.i*86
-*.x86_64
-*.hex
-
-# Debug files
-*.dSYM/
-*.su
-*.idb
-*.pdb
-
-# Kernel Module Compile Results
-*.mod*
-*.cmd
-.tmp_versions/
-modules.order
-Module.symvers
-Mkfile.old
-dkms.conf
-
-# debug information files
-*.dwo
+# --- editors / OS cruft ---
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
