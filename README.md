@@ -42,4 +42,9 @@ VirtualBox
 Hotkeys
  * Exit QEMU: Ctrl+Alt+2 -> type quit
  * Release mouse cursor: Ctrl+Alt+G (QEMU) / Right Ctrl (VirtualBox)
+## Скриншоты системы / System Screenshots
+
+<img width="1024" height="768" alt="screenshot-window" src="https://github.com/user-attachments/assets/c058be6f-6080-4edd-8a71-bf83a8c718b7" />
+<img width="1024" height="768" alt="screenshot-desktop" src="https://github.com/user-attachments/assets/0cf6a949-9ca7-403c-aa64-5784a4f56d7d" />
+<img width="1024" height="768" alt="screenshot-aichat" src="https://github.com/user-attachments/assets/d731996d-92ae-4323-b4d2-5c394778662f" />
 
